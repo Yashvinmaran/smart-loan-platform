@@ -1,0 +1,37 @@
+.loans {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  
+  .loans h2 {
+    margin-bottom: 20px;
+  }
+  
+  .loans-table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: white;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  .loans-table th, .loans-table td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+  }
+  
+  .loans-table th {
+    background-color: #2c3e50;
+    color: white;
+  }
+  
+  .loans-table a {
+    color: #2c3e50;
+    margin: 0 5px;
+  }
+  
+  .loans-table select {
+    padding: 5px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+  }

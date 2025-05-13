@@ -1,0 +1,192 @@
+.profileContainer {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem;
+  }
+  
+  .profileContainer h1 {
+    text-align: center;
+    color: #2c3e50;
+    margin-bottom: 2rem;
+    font-size: 2rem;
+  }
+  
+  .loading, .error {
+    text-align: center;
+    padding: 2rem;
+    font-size: 1.2rem;
+  }
+  
+  .error {
+    color: #e74c3c;
+  }
+  
+  .profileGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    gap: 2rem;
+    margin-bottom: 2rem;
+  }
+  
+  .profileCard, .cibilCard {
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+    padding: 2rem;
+  }
+  
+  .profileCard h2, .cibilCard h2 {
+    color: #2c3e50;
+    margin-top: 0;
+    margin-bottom: 1.5rem;
+    font-size: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #eee;
+  }
+  
+  .profileField {
+    margin-bottom: 1.5rem;
+  }
+  
+  .fieldLabel {
+    display: block;
+    font-weight: 500;
+    color: #7f8c8d;
+    margin-bottom: 0.3rem;
+    font-size: 0.9rem;
+  }
+  
+  .fieldValue {
+    display: block;
+    color: #2c3e50;
+    font-size: 1.1rem;
+  }
+  
+  .editButton {
+    padding: 0.8rem 1.5rem;
+    background-color: #3498db;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 1rem;
+  }
+  
+  .editButton:hover {
+    background-color: #2980b9;
+  }
+  
+  .scoreContainer {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    margin-bottom: 2rem;
+  }
+  
+  .scoreCircle {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background-color: #f5f5f5;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border: 5px solid #3498db;
+  }
+  
+  .scoreValue {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #2c3e50;
+  }
+  
+  .scoreLabel {
+    font-size: 0.9rem;
+    color: #7f8c8d;
+  }
+  
+  .scoreDetails {
+    flex: 1;
+  }
+  
+  .scoreDetail {
+    margin-bottom: 1rem;
+  }
+  
+  .detailLabel {
+    display: block;
+    font-size: 0.9rem;
+    color: #7f8c8d;
+    margin-bottom: 0.2rem;
+  }
+  
+  .detailValue {
+    display: block;
+    font-size: 1rem;
+    color: #2c3e50;
+    font-weight: 500;
+  }
+  
+  .excellent {
+    color: #27ae60;
+  }
+  
+  .good {
+    color: #2ecc71;
+  }
+  
+  .fair {
+    color: #f39c12;
+  }
+  
+  .poor {
+    color: #e74c3c;
+  }
+  
+  .scoreInfo h3 {
+    color: #2c3e50;
+    margin-top: 0;
+    margin-bottom: 1rem;
+    font-size: 1.2rem;
+  }
+  
+  .scoreInfo ul {
+    padding-left: 1.5rem;
+    margin: 0;
+    color: #7f8c8d;
+  }
+  
+  .scoreInfo li {
+    margin-bottom: 0.5rem;
+  }
+  
+  .logoutButton {
+    display: block;
+    margin: 2rem auto 0;
+    padding: 0.8rem 1.5rem;
+    background-color: #e74c3c;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  
+  .logoutButton:hover {
+    background-color: #c0392b;
+  }
+  
+  @media (max-width: 768px) {
+    .profileGrid {
+      grid-template-columns: 1fr;
+    }
+    
+    .scoreContainer {
+      flex-direction: column;
+      text-align: center;
+    }
+  }

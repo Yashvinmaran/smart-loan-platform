@@ -1,0 +1,38 @@
+.errorBoundary {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 2rem;
+    text-align: center;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+  }
+  
+  .errorBoundary h1 {
+    color: #e74c3c;
+    margin-bottom: 1rem;
+  }
+  
+  .errorMessage {
+    color: #c0392b;
+    background-color: #fadbd8;
+    padding: 1rem;
+    border-radius: 5px;
+    margin: 1rem 0;
+    font-family: monospace;
+  }
+  
+  .homeLink {
+    display: inline-block;
+    margin-top: 1rem;
+    padding: 0.8rem 1.5rem;
+    background-color: #3498db;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+  }
+  
+  .homeLink:hover {
+    background-color: #2980b9;
+  }
