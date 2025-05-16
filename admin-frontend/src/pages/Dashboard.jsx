@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react';
 import { getLoans } from '../services/adminApi';
 import '../styles/Dashboard.css';
+import { Link, useNavigate } from 'react-router-dom';
 
 function Dashboard() {
   const [stats, setStats] = useState({ total: 0, approved: 0, pending: 0, rejected: 0 });
   const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
   const fetchStats = async () => {
     try {
@@ -20,10 +22,15 @@ function Dashboard() {
       setError('Failed to load loan statistics. Please try logging in again.');
     }
   };
-
   useEffect(() => {
-    fetchStats();
-  }, []);
+    const token = localStorage.getItem('adminToken');
+    if (!token) {
+      navigate('/admin/login');
+    } else {
+      fetchStats();
+    }
+  }, [navigate]);
+  
 
   return (
     <div className="dashboard">
