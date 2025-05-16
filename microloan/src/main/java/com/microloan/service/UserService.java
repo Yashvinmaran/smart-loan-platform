@@ -12,7 +12,9 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -26,6 +28,9 @@ public class UserService implements UserDetailsService {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private JwtService jwtService;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -82,14 +87,20 @@ public class UserService implements UserDetailsService {
         }
     }
 
-    public Object loginUser(LoginRequest loginRequest) {
+    public Map<String, Object> loginUser(LoginRequest loginRequest) {
         User user = userRepository.findByEmail(loginRequest.getEmail())
                 .orElseThrow(() -> new RuntimeException("Invalid email or password"));
         if (!passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
             throw new RuntimeException("Invalid email or password");
         }
-        // For simplicity, returning user details. In real app, return JWT or session info.
-        return user;
+        // Generate JWT token
+        UserDetails userDetails = loadUserByUsername(user.getEmail());
+        String token = jwtService.generateToken(userDetails);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("token", token);
+        response.put("user", user);
+        return response;
     }
 
     public User getUserProfile(Long id) {
@@ -101,5 +112,27 @@ public class UserService implements UserDetailsService {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found"));
         return user.getCibilScore();
+    }
+
+    public void migratePasswordsToBCrypt() {
+        List<Admin> admins = adminRepository.findAll();
+        for (Admin admin : admins) {
+            String password = admin.getPassword();
+            if (password != null && !password.startsWith("$2a$") && !password.startsWith("$2b$")) {
+                String encoded = passwordEncoder.encode(password);
+                admin.setPassword(encoded);
+                adminRepository.save(admin);
+            }
+        }
+
+        List<User> users = userRepository.findAll();
+        for (User user : users) {
+            String password = user.getPassword();
+            if (password != null && !password.startsWith("$2a$") && !password.startsWith("$2b$")) {
+                String encoded = passwordEncoder.encode(password);
+                user.setPassword(encoded);
+                userRepository.save(user);
+            }
+        }
     }
 }
