@@ -1,12 +1,16 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { applyForLoan } from '../services/api'
+import { applyForLoan, uploadDocuments } from '../services/api'
+import { useAuth } from '../context/AuthContext'
 import styles from '../styles/ApplyLoan.module.css'
 
 export default function ApplyLoan() {
+  const { user, token } = useAuth()
   const [formData, setFormData] = useState({
     loanType: 'personal',
     amount: '',
+    aadhar: '',
+    pan: '',
     duration: 6,
     purpose: ''
   })
@@ -66,16 +70,28 @@ export default function ApplyLoan() {
     
     setIsSubmitting(true)
     try {
-      const formPayload = new FormData()
-      formPayload.append('loanType', formData.loanType)
-      formPayload.append('amount', formData.amount)
-      formPayload.append('duration', formData.duration)
-      formPayload.append('purpose', formData.purpose)
-      formPayload.append('aadhar', documents.aadhar)
-      formPayload.append('pan', documents.pan)
-      if (documents.incomeProof) formPayload.append('incomeProof', documents.incomeProof)
+      console.log('User object:', user)
+      const userEmail = user?.email || ''
+      console.log('Derived userEmail:', userEmail)
+      // First upload documents separately
+      if (!documents.aadhar || !documents.pan) {
+        setErrors({ api: 'Please upload both Aadhar and PAN documents.' })
+        setIsSubmitting(false)
+        return
+      }
+      await uploadDocuments(userEmail, documents.aadhar, documents.pan, token)
       
-      const { loanId } = await applyForLoan(formPayload)
+      // Then submit loan application data without files
+      const loanData = {
+        loanType: formData.loanType,
+        amount: formData.amount,
+        duration: formData.duration,
+        purpose: formData.purpose && formData.purpose.toLowerCase() !== 'apply' ? formData.purpose : '',
+        aadhar: formData.aadhar,
+        pan: formData.pan,
+      }
+      
+      const { loanId } = await applyForLoan(loanData, token, userEmail)
       navigate(`/track-status/${loanId}`)
     } catch (error) {
       setErrors({ api: error.message || 'Application failed. Please try again.' })
@@ -132,13 +148,29 @@ export default function ApplyLoan() {
                 id="duration"
                 name="duration"
                 value={formData.duration}
-                onChange={handleChange}
-              >
+                onChange={handleChange}>
                 <option value="6">6 Months</option>
                 <option value="12">12 Months</option>
                 <option value="18">18 Months</option>
                 <option value="24">24 Months</option>
               </select>
+            </div>
+            <div className={styles.formGroup}>
+              <label htmlFor="duration">Aadhar and Pan</label>
+                <input
+                  type="text"
+                  name="aadhar"
+                  placeholder="Enter Aadhar"
+                  value={formData.aadhar}
+                  onChange={handleChange}
+                />
+                <input
+                  type="text"
+                  name="pan"
+                  placeholder="Enter Pan"
+                  value={formData.pan}
+                  onChange={handleChange}
+                />
             </div>
             
             <div className={styles.formGroup}>

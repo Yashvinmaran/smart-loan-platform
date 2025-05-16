@@ -82,8 +82,7 @@ export default function Profile() {
           
           <button 
             className={styles.editButton}
-            onClick={() => navigate('/profile/edit')}
-          >
+            onClick={() => navigate('/profile/edit')}>
             Edit Profile
           </button>
         </div>
@@ -129,10 +128,4 @@ export default function Profile() {
       
       <button 
         className={styles.logoutButton}
-        onClick={handleLogout}
-      >
-        Logout
-      </button>
-    </div>
-  )
-}
+        onClick={handleLogout}>        Logout      </button></div>)}

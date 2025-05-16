@@ -22,7 +22,7 @@ export default function ProtectedRoute() {
         }
 
         // Optional: validate by API if needed
-        await getUserProfile(user.email || user.id || '') // fallback logic
+        await getUserProfile(user.email || user.id || '', token)
         setIsAuthenticated(true)
       } catch (error) {
         console.warn("Auth failed:", error)

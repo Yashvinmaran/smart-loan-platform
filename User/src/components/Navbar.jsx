@@ -1,10 +1,24 @@
-import { Link, useLocation } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useState } from 'react'
+import { useAuth } from '../context/AuthContext'
 import styles from '../styles/Navbar.module.css'
 
 export default function Navbar() {
   const location = useLocation()
+  const navigate = useNavigate()
+  const { user } = useAuth()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+
+  const handleProfileClick = (e) => {
+    e.preventDefault()
+    setMobileMenuOpen(false)
+    const localUser = JSON.parse(localStorage.getItem('user'))
+    if (user || localUser) {
+      navigate('/profile')
+    } else {
+      navigate('/login')
+    }
+  }
 
   return (
     <nav className={styles.navbar}>
@@ -29,18 +43,15 @@ export default function Navbar() {
           >
             Apply Loan
           </Link>
-          <Link 
-            to="/track-status" 
-            className={`${styles.navLink} ${location.pathname === '/track-status' ? styles.active : ''}`}
-          >
+          <Link to="/track-status" className={`${styles.navLink} ${location.pathname === '/track-status' ? styles.active : ''}`}>
             Track Status
           </Link>
-          <Link 
-            to="/login" 
-            className={`${styles.navLink} ${location.pathname === '/login' ? styles.active : ''}`}
+          <a href="/profile"
+            onClick={handleProfileClick}
+            className={`${styles.navLink} ${location.pathname === '/profile' ? styles.active : ''}`}
           >
-            Login
-          </Link>
+            Profile
+          </a>
         </div>
         
         <button 

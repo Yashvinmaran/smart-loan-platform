@@ -1,7 +1,49 @@
-import { Link } from 'react-router-dom'
-import styles from '../styles/Home.module.css'
+import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import styles from '../styles/Home.module.css';
 
 export default function Home() {
+  const [loanAmount, setLoanAmount] = useState(50000);
+  const [loanTenure, setLoanTenure] = useState(12);
+  const [monthlyEMI, setMonthlyEMI] = useState(0);
+  const [totalInterest, setTotalInterest] = useState(0);
+  const [totalPayment, setTotalPayment] = useState(0);
+  const [interestRate, setInterestRate] = useState(2.0);
+
+  useEffect(() => {
+    updateInterestRate(loanTenure);
+  }, [loanTenure]);
+
+  useEffect(() => {
+    calculateEMI();
+  }, [loanAmount, loanTenure, interestRate]);
+
+  const updateInterestRate = (tenure) => {
+    if (tenure <= 6) {
+      setInterestRate(1.5);
+    } else if (tenure > 6 && tenure <= 12) {
+      setInterestRate(2.0);
+    } else if (tenure > 12 && tenure <= 18) {
+      setInterestRate(2.25);
+    } else {
+      setInterestRate(2.5);
+    }
+  };
+
+  const calculateEMI = () => {
+    const P = loanAmount;
+    const r = interestRate / 100;
+    const n = loanTenure;
+
+    const emi = (P * r * Math.pow(1 + r, n)) / (Math.pow(1 + r, n) - 1);
+    const total = emi * n;
+    const interest = total - P;
+
+    setMonthlyEMI(Math.round(emi));
+    setTotalInterest(Math.round(interest));
+    setTotalPayment(Math.round(total));
+  };
+
   return (
     <div className={styles.homeContainer}>
       <section className={styles.hero}>
@@ -12,8 +54,6 @@ export default function Home() {
             <Link to="/apply-loan" className={styles.primaryButton}>Apply Now</Link>
             <a href="https://www.cibil.com" className={styles.secondaryButton}>Check Eligibility</a>
           </div>
-
-          
         </div>
         <div className={styles.heroImage}></div>
       </section>
@@ -76,44 +116,46 @@ export default function Home() {
           <div className={styles.calculatorInputs}>
             <div className={styles.inputGroup}>
               <label htmlFor="loanAmount">Loan Amount (₹)</label>
-              <input 
-                type="range" 
-                id="loanAmount" 
-                min="5000" 
-                max="200000" 
-                step="5000" 
-                defaultValue="50000"
+              <input
+                type="range"
+                id="loanAmount"
+                min="5000"
+                max="200000"
+                step="5000"
+                value={loanAmount}
+                onChange={(e) => setLoanAmount(Number(e.target.value))}
               />
-              <div className={styles.amountDisplay}>₹50,000</div>
+              <div className={styles.amountDisplay}>₹{loanAmount.toLocaleString()}</div>
             </div>
             <div className={styles.inputGroup}>
               <label htmlFor="loanTenure">Tenure (Months)</label>
-              <input 
-                type="range" 
-                id="loanTenure" 
-                min="6" 
-                max="24" 
-                step="1" 
-                defaultValue="12"
+              <input
+                type="range"
+                id="loanTenure"
+                min="6"
+                max="24"
+                step="1"
+                value={loanTenure}
+                onChange={(e) => setLoanTenure(Number(e.target.value))}
               />
-              <div className={styles.tenureDisplay}>12 Months</div>
+              <div className={styles.tenureDisplay}>{loanTenure} Months</div>
             </div>
           </div>
           <div className={styles.calculatorResult}>
             <div className={styles.resultItem}>
               <span>Monthly EMI:</span>
-              <strong>₹4,545</strong>
+              <strong>₹{monthlyEMI.toLocaleString()}</strong>
             </div>
             <div className={styles.resultItem}>
               <span>Total Interest:</span>
-              <strong>₹4,540</strong>
+              <strong>₹{totalInterest.toLocaleString()}</strong>
             </div>
             <div className={styles.resultItem}>
               <span>Total Payment:</span>
-              <strong>₹54,540</strong>
+              <strong>₹{totalPayment.toLocaleString()}</strong>
             </div>
             <div className={styles.interestNote}>
-              *Calculated at 1.5% monthly interest rate
+              *Calculated at {interestRate}% monthly interest rate based on selected tenure
             </div>
           </div>
         </div>
@@ -170,5 +212,5 @@ export default function Home() {
         </div>
       </section>
     </div>
-  )
+  );
 }

@@ -79,9 +79,7 @@ export const getCurrentUser = async (email, token) => {
       throw new Error('No email provided');
     }
     console.debug('Fetching current user with email:', email, 'and token:', token);
-    const response = await api.get(`/user/me?email=${encodeURIComponent(email)}`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
+    const response = await api.get(`/user/${email}`);
     return response.data;
   } catch (error) {
     const errorMessage = error.response?.data?.message || error.response?.data || error.message || 'Failed to fetch user';
@@ -96,7 +94,7 @@ export const getCurrentUser = async (email, token) => {
 export const getUserProfile = async (identifier, token) => {
   try {
     console.debug('Get profile for identifier:', identifier);
-    const response = await api.get(`/user/profile/${identifier}`, {
+    const response = await api.get(`/user/get/${identifier}`, {
       headers: token ? { Authorization: `Bearer ${token}` } : {},
     });
     return response.data;
@@ -110,10 +108,13 @@ export const getUserProfile = async (identifier, token) => {
   }
 };
 
-export const applyForLoan = async (loanData, token) => {
+export const applyForLoan = async (loanData, token, userId) => {
   try {
     console.debug('Apply for loan payload:', loanData);
-    const response = await api.post('/loan/apply', loanData, {
+    if (!userId) {
+      throw new Error('User ID is required for loan application');
+    }
+    const response = await api.post(`/user/loan/apply/${userId}`, loanData, {
       headers: { Authorization: `Bearer ${token}` },
     });
     return response.data;
@@ -127,10 +128,35 @@ export const applyForLoan = async (loanData, token) => {
   }
 };
 
+export const uploadDocuments = async (userId, aadharFile, panFile, token) => {
+  try {
+    if (!userId) {
+      throw new Error('User ID is required for document upload');
+    }
+    const formData = new FormData();
+    formData.append('aadharFile', aadharFile);
+    formData.append('panFile', panFile);
+    const response = await api.post(`/user/upload-documents/${userId}`, formData, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    return response.data;
+  } catch (error) {
+    const errorMessage = error.response?.data?.message || error.response?.data || error.message || 'Document upload failed';
+    console.error('Upload documents error:', errorMessage, {
+      status: error.response?.status,
+      data: error.response?.data,
+    });
+    throw new Error(errorMessage);
+  }
+};
+
 export const getLoanStatus = async (loanId, token) => {
   try {
     console.debug('Get loan status for loanId:', loanId);
-    const response = await api.get(`/loan/status/${loanId}`, {
+    const response = await api.get(`/user/loan/status/${loanId}`, {
       headers: { Authorization: `Bearer ${token}` },
     });
     return response.data;

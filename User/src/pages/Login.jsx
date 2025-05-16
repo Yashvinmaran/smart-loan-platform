@@ -12,7 +12,7 @@ export default function Login() {
   const location = useLocation();
   const { login } = useAuth();
 
-  const from = location.state?.from?.pathname || '/profile';
+  const from = location.state?.from?.pathname || '/';
 
   const validate = () => {
     const newErrors = {};

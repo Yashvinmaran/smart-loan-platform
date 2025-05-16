@@ -23,6 +23,10 @@ export const registerAdmin = async (credentials) => {
 export const adminLogin = async (credentials) => {
   try {
     const response = await axios.post(`${API_URL}/login`, credentials);
+    const token = response.data.token;
+    if (token) {
+      localStorage.setItem("adminToken", token);
+    }
     return response.data;
   } catch (error) {
     console.error("Login error:", error.response?.data || error.message);
@@ -55,12 +59,21 @@ export const getLoans = async () => {
 };
 
 // ============ Update Loan Status ============
+
 export const updateLoanStatus = async (id, { status }) => {
-  if (!getToken()) throw new Error("No admin token found");
+  const token = getToken();
+  if (!token) throw new Error("No admin token found");
   if (!id || !status) throw new Error("Loan ID and status are required");
+
   try {
     const response = await axios.put(
-      `${API_URL}/loan/status/${id}?status=${encodeURIComponent(status)}`
+      `${API_URL}/loan/status/${id}?status=${encodeURIComponent(status)}`,
+      null,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
     );
     return response.data;
   } catch (error) {
@@ -141,5 +154,24 @@ export const updateUser = async (email, userData) => {
   } catch (error) {
     console.error("Update user error:", error.response?.data || error.message);
     throw new Error(error.response?.data?.message || "Failed to update user");
+  }
+};
+
+// ============ Delete Loan ============
+export const deleteLoan = async (id) => {
+  const token = getToken();
+  if (!token) throw new Error("No admin token found");
+  if (!id) throw new Error("Loan ID is required for deletion");
+
+  try {
+    const response = await axios.delete(`${API_URL}/loan/delete/${id}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Delete loan error:", error.response?.data || error.message);
+    throw new Error(error.response?.data?.message || "Failed to delete loan");
   }
 };
