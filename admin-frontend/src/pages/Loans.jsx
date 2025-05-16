@@ -27,7 +27,7 @@ function Loans() {
       console.error('Failed to update status:', err);
     }
   };
-
+  let idx = 1;
   return (
     <div className="loans">
       <h2>Manage Loans</h2>
@@ -46,7 +46,7 @@ function Loans() {
         <tbody>
           {loans.map((loan) => (
             <tr key={loan.id}>
-              <td>{loan.id}</td>
+              <td>{idx++}</td>
               <td>{loan.userId}</td>
               <td>{loan.amount}</td>
               <td>{loan.type}</td>

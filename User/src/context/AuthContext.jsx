@@ -1,61 +1,81 @@
-import { createContext, useContext, useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { getUserProfile } from '../services/api'
+import { createContext, useContext, useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { getCurrentUser } from '../services/api';
 
-const AuthContext = createContext()
+const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
-  const [user, setUser] = useState(null)
-  const [loading, setLoading] = useState(true)
-  const navigate = useNavigate()
+  const [user, setUser] = useState(null);
+  const [token, setToken] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const loadAuthData = async () => {
+      const storedToken = localStorage.getItem('token');
+      const storedUser = localStorage.getItem('user');
+
+      if (storedToken && storedUser) {
+        setToken(storedToken);
+        setUser(JSON.parse(storedUser));
+        setLoading(false);
+      } else {
+        setToken(null);
+        setUser(null);
+        setLoading(false);
+      }
+    };
+
+    loadAuthData();
+  }, []);
 
   useEffect(() => {
     const loadUser = async () => {
-      try {
-        const token = localStorage.getItem('token')
-        const storedUser = localStorage.getItem('user')
-        
-        if (token && storedUser) {
-          const userData = JSON.parse(storedUser)
-          const freshUserData = await getUserProfile(userData.id)
-          setUser(freshUserData)
-        }
-      } catch (error) {
-        logout()
-      } finally {
-        setLoading(false)
+      if (!token || !user?.email) {
+        return;
       }
-    }
-    
-    loadUser()
-  }, [])
 
-  const login = (userData, token) => {
-    localStorage.setItem('token', token)
-    localStorage.setItem('user', JSON.stringify(userData))
-    setUser(userData)
-  }
+      try {
+        const userData = await getCurrentUser(user.email, token);
+        setUser(userData);
+      } catch (error) {
+        console.error('Failed to validate user:', error.message);
+        logout();
+      }
+    };
+
+    loadUser();
+  }, [token]);
+
+  const login = (userData, jwtToken) => {
+    setUser(userData);
+    setToken(jwtToken);
+    localStorage.setItem('user', JSON.stringify(userData));
+    localStorage.setItem('token', jwtToken);
+  };
 
   const logout = () => {
-    localStorage.removeItem('token')
-    localStorage.removeItem('user')
-    setUser(null)
-    navigate('/login')
-  }
+    setUser(null);
+    setToken(null);
+    localStorage.removeItem('user');
+    localStorage.removeItem('token');
+    navigate('/login', { replace: true });
+  };
 
   const updateUser = (updatedData) => {
-    const mergedUser = { ...user, ...updatedData }
-    localStorage.setItem('user', JSON.stringify(mergedUser))
-    setUser(mergedUser)
-  }
+    if (!user) return;
+    const newUser = { ...user, ...updatedData };
+    setUser(newUser);
+    localStorage.setItem('user', JSON.stringify(newUser));
+  };
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, logout, updateUser }}>
+    <AuthContext.Provider value={{ user, token, loading, login, logout, updateUser }}>
       {children}
     </AuthContext.Provider>
-  )
+  );
 }
 
 export function useAuth() {
-  return useContext(AuthContext)
+  return useContext(AuthContext);
 }

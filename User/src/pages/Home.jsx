@@ -10,8 +10,10 @@ export default function Home() {
           <p>Get funds from ₹5,000 to ₹2,00,000 with competitive rates and flexible repayment</p>
           <div className={styles.ctaButtons}>
             <Link to="/apply-loan" className={styles.primaryButton}>Apply Now</Link>
-            <Link to="/login" className={styles.secondaryButton}>Check Eligibility</Link>
+            <a href="https://www.cibil.com" className={styles.secondaryButton}>Check Eligibility</a>
           </div>
+
+          
         </div>
         <div className={styles.heroImage}></div>
       </section>

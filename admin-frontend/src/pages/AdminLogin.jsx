@@ -12,11 +12,13 @@ function AdminLogin() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const token = await adminLogin({ email, password });
-      localStorage.setItem('adminToken', token);
+      const response = await adminLogin({ email, password });
+      localStorage.setItem('adminToken', response.token);
       navigate('/admin/dashboard');
     } catch (err) {
-      setError(err || 'Login failed');
+      // Extract message if err is an object with message property
+      const errorMessage = err && typeof err === 'object' && err.message ? err.message : err;
+      setError(errorMessage || 'Login failed');
     }
   };
 

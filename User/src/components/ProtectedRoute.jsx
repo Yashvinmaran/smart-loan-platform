@@ -11,21 +11,21 @@ export default function ProtectedRoute() {
     const verifyAuth = async () => {
       try {
         const token = localStorage.getItem('token')
-        if (!token) {
-          setIsAuthenticated(false)
-          return
-        }
-        
         const user = JSON.parse(localStorage.getItem('user'))
-        if (!user?.id) {
+
+        console.log("ProtectedRoute check — token:", token)
+        console.log("ProtectedRoute check — user:", user)
+
+        if (!token || !user) {
           setIsAuthenticated(false)
           return
         }
-        
-        // Verify token is still valid by making an API call
-        await getUserProfile(user.id)
+
+        // Optional: validate by API if needed
+        await getUserProfile(user.email || user.id || '') // fallback logic
         setIsAuthenticated(true)
       } catch (error) {
+        console.warn("Auth failed:", error)
         localStorage.removeItem('token')
         localStorage.removeItem('user')
         setIsAuthenticated(false)
@@ -33,12 +33,12 @@ export default function ProtectedRoute() {
         setLoading(false)
       }
     }
-    
+
     verifyAuth()
   }, [location])
 
   if (loading) return <div className="loading-spinner">Loading...</div>
-  
+
   return isAuthenticated ? (
     <Outlet />
   ) : (

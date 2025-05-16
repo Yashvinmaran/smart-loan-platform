@@ -34,7 +34,6 @@ export default function ApplyLoan() {
     if (files && files[0]) {
       setDocuments(prev => ({ ...prev, [name]: files[0] }))
       
-      // Create preview
       const reader = new FileReader()
       reader.onload = (event) => {
         setPreviews(prev => ({ ...prev, [name]: event.target.result }))

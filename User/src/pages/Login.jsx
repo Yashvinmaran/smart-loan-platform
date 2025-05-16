@@ -1,119 +1,103 @@
-import { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
-import { loginUser } from '../services/api'
-import styles from '../styles/Login.module.css'
+import { useState } from 'react';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { loginUser, getCurrentUser } from '../services/api';
+import { useAuth } from '../context/AuthContext';
+import styles from '../styles/Login.module.css';
 
 export default function Login() {
-  const [loginMethod, setLoginMethod] = useState('mobile')
-  const [formData, setFormData] = useState({
-    mobile: '',
-    email: '',
-    password: ''
-  })
-  const [errors, setErrors] = useState({})
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const navigate = useNavigate()
+  const [formData, setFormData] = useState({ email: '', password: '' });
+  const [errors, setErrors] = useState({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { login } = useAuth();
+
+  const from = location.state?.from?.pathname || '/profile';
 
   const validate = () => {
-    const newErrors = {}
-    
-    if (loginMethod === 'mobile' && !formData.mobile) {
-      newErrors.mobile = 'Mobile number is required'
-    } else if (loginMethod === 'email' && !formData.email) {
-      newErrors.email = 'Email is required'
-    } else if (loginMethod === 'email' && !/^\S+@\S+\.\S+$/.test(formData.email)) {
-      newErrors.email = 'Email is invalid'
+    const newErrors = {};
+    if (!formData.email) {
+      newErrors.email = 'Email is required';
+    } else if (!/^\S+@\S+\.\S+$/.test(formData.email)) {
+      newErrors.email = 'Email is invalid';
     }
-    
     if (!formData.password) {
-      newErrors.password = 'Password is required'
+      newErrors.password = 'Password is required';
     } else if (formData.password.length < 6) {
-      newErrors.password = 'Password must be at least 6 characters'
+      newErrors.password = 'Password must be at least 6 characters';
     }
-    
-    setErrors(newErrors)
-    return Object.keys(newErrors).length === 0
-  }
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
-    if (!validate()) return
-    
-    setIsSubmitting(true)
+    e.preventDefault();
+    if (!validate()) return;
+
+    setIsSubmitting(true);
+    setErrors({});
+
     try {
-      const credentials = loginMethod === 'mobile' 
-        ? { mobile: formData.mobile, password: formData.password }
-        : { email: formData.email, password: formData.password }
-      
-      const { token, user } = await loginUser(credentials)
-      localStorage.setItem('token', token)
-      localStorage.setItem('user', JSON.stringify(user))
-      navigate('/profile')
+      const credentials = {
+        email: formData.email.trim(),
+        password: formData.password
+      };
+      const token = await loginUser(credentials);
+      const user = await getCurrentUser(credentials.email, token.jwtToken || token);
+
+      // Save to localStorage (if not handled by AuthContext)
+      localStorage.setItem('token', token.jwtToken || token);
+      localStorage.setItem('user', JSON.stringify(user));
+
+      // Update context and redirect
+      login(user, token);
+      navigate(from, { replace: true });
     } catch (error) {
-      setErrors({ api: error.message || 'Login failed. Please try again.' })
+      const status = error.response?.status;
+      const data = error.response?.data;
+      let errorMessage = error.message || 'Login failed';
+
+      if (status === 423) {
+        errorMessage = `Account locked: ${data?.error || error.message}`;
+      } else if (status === 401) {
+        errorMessage = 'Invalid credentials.';
+      } else if (status === 500) {
+        errorMessage = `Server error: ${data?.error || error.message}`;
+      }
+
+      setErrors({ api: errorMessage });
     } finally {
-      setIsSubmitting(false)
+      setIsSubmitting(false);
     }
-  }
+  };
 
   const handleChange = (e) => {
-    const { name, value } = e.target
-    setFormData(prev => ({ ...prev, [name]: value }))
-  }
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
 
   return (
     <div className={styles.loginContainer}>
       <div className={styles.loginCard}>
         <h2>Login to Your Account</h2>
-        
-        <div className={styles.toggleContainer}>
-          <button
-            className={`${styles.toggleButton} ${loginMethod === 'mobile' ? styles.active : ''}`}
-            onClick={() => setLoginMethod('mobile')}
-          >
-            Mobile Login
-          </button>
-          <button
-            className={`${styles.toggleButton} ${loginMethod === 'email' ? styles.active : ''}`}
-            onClick={() => setLoginMethod('email')}
-          >
-            Email Login
-          </button>
-        </div>
-        
+
         {errors.api && <div className={styles.apiError}>{errors.api}</div>}
-        
+
         <form onSubmit={handleSubmit}>
-          {loginMethod === 'mobile' ? (
-            <div className={styles.formGroup}>
-              <label htmlFor="mobile">Mobile Number</label>
-              <input
-                type="tel"
-                id="mobile"
-                name="mobile"
-                value={formData.mobile}
-                onChange={handleChange}
-                placeholder="Enter 10-digit mobile number"
-                className={errors.mobile ? styles.errorInput : ''}
-              />
-              {errors.mobile && <span className={styles.errorText}>{errors.mobile}</span>}
-            </div>
-          ) : (
-            <div className={styles.formGroup}>
-              <label htmlFor="email">Email Address</label>
-              <input
-                type="email"
-                id="email"
-                name="email"
-                value={formData.email}
-                onChange={handleChange}
-                placeholder="Enter your email"
-                className={errors.email ? styles.errorInput : ''}
-              />
-              {errors.email && <span className={styles.errorText}>{errors.email}</span>}
-            </div>
-          )}
-          
+          <div className={styles.formGroup}>
+            <label htmlFor="email">Email Address</label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              placeholder="Enter your email"
+              className={errors.email ? styles.errorInput : ''}
+            />
+            {errors.email && <span className={styles.errorText}>{errors.email}</span>}
+          </div>
+
           <div className={styles.formGroup}>
             <label htmlFor="password">Password</label>
             <input
@@ -127,21 +111,19 @@ export default function Login() {
             />
             {errors.password && <span className={styles.errorText}>{errors.password}</span>}
           </div>
-          
-          <button 
-            type="submit" 
-            className={styles.submitButton}
-            disabled={isSubmitting}
-          >
+
+          <button type="submit" className={styles.submitButton} disabled={isSubmitting}>
             {isSubmitting ? 'Logging in...' : 'Login'}
           </button>
         </form>
-        
+
         <div className={styles.loginFooter}>
-          <p>Don't have an account? <Link to="/register">Register here</Link></p>
+          <p>
+            Don't have an account? <Link to="/register">Register here</Link>
+          </p>
           <Link to="/forgot-password">Forgot Password?</Link>
         </div>
       </div>
     </div>
-  )
+  );
 }

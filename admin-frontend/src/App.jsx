@@ -7,6 +7,21 @@ import Loans from './pages/Loans.jsx';
 import ProtectedAdmin from './components/ProtectedAdmin.jsx';
 import Sidebar from './components/Sidebar.jsx';
 
+function AdminLayout() {
+  return (
+    <div style={{ display: 'flex' }}>
+      <Sidebar />
+      <div style={{ flex: 1, padding: '20px' }}>
+        <Routes>
+          <Route path="dashboard" element={<Dashboard />} />
+          <Route path="users" element={<Users />} />
+          <Route path="loans" element={<Loans />} />
+        </Routes>
+      </div>
+    </div>
+  );
+}
+
 function App() {
   return (
     <Router>
@@ -18,16 +33,7 @@ function App() {
           path="/admin/*"
           element={
             <ProtectedAdmin>
-              <div style={{ display: 'flex' }}>
-                <Sidebar />
-                <div style={{ flex: 1, padding: '20px' }}>
-                  <Routes>
-                    <Route path="dashboard" element={<Dashboard />} />
-                    <Route path="users" element={<Users />} />
-                    <Route path="loans" element={<Loans />} />
-                  </Routes>
-                </div>
-              </div>
+              <AdminLayout />
             </ProtectedAdmin>
           }
         />

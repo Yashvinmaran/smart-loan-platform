@@ -1,11 +1,12 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { registerUser } from '../services/api'
+import { registerUser, loginUser } from '../services/api'
+import { useAuth } from '../context/AuthContext'
 import styles from '../styles/Register.module.css'
 
 export default function Register() {
   const [formData, setFormData] = useState({
-    fullName: '',
+    name: '',
     email: '',
     mobile: '',
     password: '',
@@ -17,14 +18,15 @@ export default function Register() {
   const [errors, setErrors] = useState({})
   const [isSubmitting, setIsSubmitting] = useState(false)
   const navigate = useNavigate()
+  const { login } = useAuth()
 
   const validate = () => {
     const newErrors = {}
     
-    if (!formData.fullName.trim()) {
-      newErrors.fullName = 'Full name is required'
-    } else if (formData.fullName.trim().length < 3) {
-      newErrors.fullName = 'Name must be at least 3 characters'
+    if (!formData.name.trim()) {
+      newErrors.name = 'Full name is required'
+    } else if (formData.name.trim().length < 3) {
+      newErrors.name = 'Name must be at least 3 characters'
     }
     
     if (!formData.email) {
@@ -75,18 +77,21 @@ export default function Register() {
     setIsSubmitting(true)
     try {
       await registerUser({
-        fullName: formData.fullName,
+        name: formData.name,
         email: formData.email,
         mobile: formData.mobile,
         password: formData.password,
         address: formData.address,
-        documents: {
-          aadhar: formData.aadhar,
-          pan: formData.pan
-        }
+        aadhar: formData.aadhar,
+        pan: formData.pan
       })
       
-      navigate('/login', { state: { registrationSuccess: true } })
+      const { token, user } = await loginUser({
+        email: formData.email,
+        password: formData.password
+      })
+      login(user, token)
+      navigate('/profile')
     } catch (error) {
       setErrors({ 
         api: error.message || 'Registration failed. Please try again.',
@@ -111,17 +116,17 @@ export default function Register() {
         
         <form onSubmit={handleSubmit}>
           <div className={styles.formGroup}>
-            <label htmlFor="fullName">Full Name*</label>
+            <label htmlFor="name">Full Name*</label>
             <input
               type="text"
-              id="fullName"
-              name="fullName"
-              value={formData.fullName}
+              id="name"
+              name="name"
+              value={formData.name}
               onChange={handleChange}
               placeholder="Enter your full name"
-              className={errors.fullName ? styles.errorInput : ''}
+              className={errors.name ? styles.errorInput : ''}
             />
-            {errors.fullName && <span className={styles.errorText}>{errors.fullName}</span>}
+            {errors.name && <span className={styles.errorText}>{errors.name}</span>}
           </div>
           
           <div className={styles.formGroup}>
