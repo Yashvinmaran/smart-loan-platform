@@ -1,0 +1,160 @@
+/* applyloan.css - Luxury Light Theme for Apply Loan page */
+
+body {
+  margin: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg, #1e1b4b, #0f172a, #312e81);
+  color: #f1f5f9;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+  background-size: cover;
+  background-attachment: fixed;
+}
+
+/* Card container with glass effect */
+.apply-loan-card {
+  margin-top: 200px;
+  background: rgba(30, 41, 59, 0.85);
+  border-radius: 14px;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.6);
+  max-width: 600px;
+  width: 100%;
+  padding: 2rem 2.5rem;
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  animation: fadeIn 0.8s ease forwards;
+}
+
+/* Header */
+.apply-loan-header {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.apply-loan-header h2 {
+  font-size: 2.25rem;
+  font-weight: 700;
+  background: linear-gradient(90deg, #60a5fa, #a78bfa);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin: 0;
+}
+
+.apply-loan-header p {
+  color: #94a3b8;
+  font-size: 0.95rem;
+  margin-top: 0.3rem;
+}
+
+/* Form grid */
+.apply-loan-form {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25rem 1.5rem;
+}
+
+.apply-loan-form .full-width {
+  grid-column: 1 / -1;
+}
+
+/* Labels */
+.apply-loan-label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 0.4rem;
+  color: #93c5fd;
+}
+
+/* Inputs & file uploads */
+.apply-loan-input,
+.apply-loan-file {
+  width: 100%;
+  padding: 0.6rem 0.8rem;
+  border-radius: 8px;
+  border: 1px solid #334155;
+  background-color: rgba(17, 24, 39, 0.85);
+  color: #e0e7ff;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+}
+
+.apply-loan-input::placeholder {
+  color: #9ca3af;
+}
+
+.apply-loan-input:focus,
+.apply-loan-file:focus {
+  outline: none;
+  border-color: #6366f1;
+  box-shadow: 0 0 6px #6366f1aa;
+}
+
+/* File upload button */
+.apply-loan-file {
+  cursor: pointer;
+}
+
+.apply-loan-file::-webkit-file-upload-button {
+  background: linear-gradient(90deg, #6366f1, #60a5fa);
+  color: white;
+  border: none;
+  padding: 0.4rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.apply-loan-file::-webkit-file-upload-button:hover {
+  background: linear-gradient(90deg, #4f46e5, #3b82f6);
+}
+
+/* Submit button */
+.apply-loan-submit {
+  grid-column: 1 / -1;
+  background: linear-gradient(90deg, #6366f1, #60a5fa);
+  border: none;
+  padding: 0.8rem 0;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: white;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.apply-loan-submit:hover:not(:disabled) {
+  background: linear-gradient(90deg, #4f46e5, #3b82f6);
+  transform: scale(1.05);
+}
+
+.apply-loan-submit:disabled {
+  background: #475569;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 640px) {
+  .apply-loan-form {
+    grid-template-columns: 1fr;
+  }
+
+  .apply-loan-header h2 {
+    font-size: 1.8rem;
+  }
+}

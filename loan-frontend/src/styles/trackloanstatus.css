@@ -1,0 +1,215 @@
+/* Track Loan Status Page - Luxury Theme */
+.trackloanstatus-container {
+  font-family: "Poppins", sans-serif;
+  background: linear-gradient(135deg, #0a0f1c, #1b1f3a, #2c2f48);
+  min-height: 100vh;
+  width: 100vw;
+  padding: 4rem;
+  color: #e4e6eb;
+  box-sizing: border-box;
+  position: relative;
+  overflow-x: hidden;
+}
+
+.trackloanstatus-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle at 20% 80%, rgba(90, 104, 140, 0.2) 0%, transparent 50%),
+              radial-gradient(circle at 80% 20%, rgba(80, 70, 120, 0.25) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+.trackloanstatus-header {
+  text-align: center;
+  margin-bottom: 4rem;
+  position: relative;
+  z-index: 1;
+}
+
+.trackloanstatus-header h1 {
+  font-size: 4rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, #7f7fd5, #86a8e7, #91eae4);
+  background-size: 300% 300%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 3px 6px rgba(0, 0, 0, 0.5);
+  letter-spacing: 2px;
+  animation: gradientShift 5s ease infinite;
+  margin: 0;
+}
+
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.loan-grid {
+  display: grid;
+  gap: 3rem;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+}
+
+.loan-card {
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
+  backdrop-filter: blur(25px);
+  border-radius: 20px;
+  padding: 2.5rem;
+  transition: all 0.4s ease;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  position: relative;
+  z-index: 1;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+}
+
+.loan-card::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(135deg, #7f7fd5, #86a8e7, #91eae4);
+  border-radius: 22px;
+  z-index: -1;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+.loan-card:hover {
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6);
+}
+
+.loan-card:hover::before {
+  opacity: 1;
+}
+
+.loan-card h3 {
+  color: #a3bffa;
+  font-size: 1.7rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.loan-card p {
+  margin-bottom: 1rem;
+  font-size: 1rem;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.loan-card p strong {
+  color: #e4e6eb;
+  font-weight: 600;
+}
+
+/* Status Badges */
+.status-badge {
+  display: inline-block;
+  margin-left: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #fff;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.status-badge.approved {
+  background: linear-gradient(135deg, #4caf50, #2e7d32);
+}
+
+.status-badge.pending {
+  background: linear-gradient(135deg, #ffb74d, #f57c00);
+}
+
+.status-badge.rejected {
+  background: linear-gradient(135deg, #e57373, #c62828);
+}
+
+/* Pay Button */
+.pay-btn {
+  background: linear-gradient(135deg, #6a82fb, #8e9eab);
+  color: #fff;
+  padding: 1.2rem 2rem;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.4s ease;
+  font-weight: 700;
+  font-size: 1.1rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+  margin-top: 1.5rem;
+  width: 100%;
+}
+
+.pay-btn:hover {
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.5);
+}
+
+/* Home Floating Button */
+.home-button {
+  position: fixed;
+  bottom: 3rem;
+  right: 3rem;
+  background: linear-gradient(135deg, #7f7fd5, #86a8e7);
+  color: #fff;
+  padding: 1.3rem;
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+  transition: all 0.4s ease;
+  font-size: 1.3rem;
+  z-index: 1000;
+  animation: pulse 2s infinite;
+}
+
+.home-button:hover {
+  transform: scale(1.15) rotate(5deg);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.7);
+  animation: none;
+}
+
+@keyframes pulse {
+  0% { box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4); }
+  50% { box-shadow: 0 12px 30px rgba(0, 0, 0, 0.6); }
+  100% { box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4); }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .trackloanstatus-container {
+    padding: 2rem;
+  }
+
+  .trackloanstatus-header h1 {
+    font-size: 3rem;
+  }
+
+  .loan-grid {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  .loan-card {
+    padding: 2rem;
+  }
+
+  .home-button {
+    bottom: 2rem;
+    right: 2rem;
+    padding: 1rem;
+  }
+}

@@ -1,0 +1,27 @@
+/* Loan Status Overview specific responsive layout */
+.loan-status-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-top: 10px;
+  color: #aab0bf;
+}
+
+.loan-status-stats .single-item {
+  grid-column: 1 / -1;
+  justify-self: center;
+  width: fit-content;
+}
+
+/* Mobile responsiveness for loan status stats */
+@media (max-width: 479px) {
+  .loan-status-stats {
+    grid-template-columns: 1fr;
+    gap: 4px;
+  }
+
+  .loan-status-stats .single-item {
+    grid-column: 1;
+    justify-self: stretch;
+  }
+}
